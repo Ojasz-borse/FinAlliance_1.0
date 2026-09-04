@@ -8,6 +8,7 @@ venv/
 
 # Dataset
 data/
+demo/dataset/
 *.tar.gz
 *.7z
 
