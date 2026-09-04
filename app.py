@@ -16,9 +16,34 @@ import csv
 import math
 import random
 import hashlib
+import threading
 from pathlib import Path
 
-CSV_PATH = Path(__file__).parent / 'data' / 'dataset' / 'creditcard.csv'
+DATA_DIR = Path(__file__).parent / 'data' / 'dataset'
+CSV_FULL = DATA_DIR / 'creditcard.csv'
+CSV_SAMPLE = DATA_DIR / 'creditcard_sample.csv'
+
+# Use full dataset if available, otherwise fall back to bundled sample
+CSV_PATH = CSV_FULL if CSV_FULL.exists() else CSV_SAMPLE
+
+def _download_full_dataset():
+    """Download the full dataset in the background if DATASET_URL is set."""
+    import os, urllib.request
+    url = os.environ.get('DATASET_URL')
+    if not url or CSV_FULL.exists():
+        return
+    try:
+        print(f"[FinAlliance] Downloading full dataset from {url}...")
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        urllib.request.urlretrieve(url, str(CSV_FULL))
+        global CSV_PATH
+        CSV_PATH = CSV_FULL
+        print(f"[FinAlliance] Full dataset downloaded ({CSV_FULL.stat().st_size / 1024 / 1024:.1f}MB)")
+    except Exception as e:
+        print(f"[FinAlliance] Could not download dataset: {e}. Using sample.")
+
+# Kick off background download on startup
+threading.Thread(target=_download_full_dataset, daemon=True).start()
 
 # ── API: Health check ──
 @app.route('/')

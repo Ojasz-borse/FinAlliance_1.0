@@ -6,8 +6,11 @@ __pycache__/
 venv/
 .env/
 
-# Dataset
-data/
+# Dataset - only track the small sample, not the full 150MB CSV
+data/*
+!data/dataset/
+data/dataset/*
+!data/dataset/creditcard_sample.csv
 demo/dataset/
 *.tar.gz
 *.7z
