@@ -1,15 +1,7 @@
 {
     "version": 2,
-    "builds": [
-        {
-            "src": "app.py",
-            "use": "@vercel/python"
-        }
-    ],
-    "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "app.py"
-        }
-    ]
+    "framework": "nextjs",
+    "installCommand": "cd frontend-next && npm install",
+    "buildCommand": "cd frontend-next && npm run build",
+    "outputDirectory": "frontend-next/.next"
 }
